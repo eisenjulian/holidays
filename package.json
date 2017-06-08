@@ -1,0 +1,24 @@
+{
+  "name": "holidayPal",
+  "description": "Holiday Pal webhook",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache Version 2.0",
+  "author": "Julian Eisenschlos",
+  "engines": {
+    "node": "~6.0"
+  },
+  "scripts": {
+    "lint": "semistandard --fix \"**/*.js\"",
+    "start": "functions deploy holidayPal --trigger-http",
+    "deploy": "gcloud beta functions deploy holidayPal --trigger-http --stage-bucket holiday-bot-bucket"
+  },
+  "dependencies": {
+    "actions-on-google": "^1.0.0",
+    "http": "0.0.0",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "semistandard": "^9.1.0"
+  }
+}
