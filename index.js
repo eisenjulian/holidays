@@ -39,17 +39,22 @@ exports.holidayPal = (request, response) => {
 
     actionMap.set('today', app => {
         httpRequest(URL, (error, response, body) => {
+            const hasScreen = app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT);
             const date = new Date(request.body.result.parameters.date);
             const month = date.getUTCMonth() + 1;
             const day = date.getUTCDate();
             const holiday = JSON.parse(body).find(h => h.mes == month && h.dia == day);
             const simpleResponse = holiday
-                ? "Yes, it is " + holiday.motivo 
+                ? 'Yes, it is ' + holiday.motivo
                 : negatives[Math.floor(Math.random() * negatives.length)];
 
             app.ask(
                 app.buildRichResponse()
                     .addSimpleResponse(simpleResponse)
+                    .addSimpleResponse(hasScreen
+                        ? 'What would you like to do next?'
+                        : 'What would you like to do next? Try asking when the next holiday is'
+                    )
                     .addSuggestions(['When is the next holiday?'])
             );
         });
@@ -57,6 +62,7 @@ exports.holidayPal = (request, response) => {
 
     actionMap.set('nextHoliday', app => {
         httpRequest(URL, (error, response, body) => {
+            const hasScreen = app.hasSurfaceCapability(app.SurfaceCapabilities.SCREEN_OUTPUT);
             const date = new Date();
             const month = date.getUTCMonth() + 1;
             const day = date.getUTCDate();
@@ -74,6 +80,10 @@ exports.holidayPal = (request, response) => {
             app.askWithList(
                 app.buildRichResponse()
                     .addSimpleResponse('The next holiday is in ' + difference + ' days')
+                    .addSimpleResponse(hasScreen
+                        ? 'What do you want to do next?'
+                        : 'What do you want to do next? Try asking about specific dates'
+                    )
                     .addSuggestions(['Is today a holiday?']),
                 list
             );
