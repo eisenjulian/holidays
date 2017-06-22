@@ -48,13 +48,11 @@ exports.holidayPal = (request, response) => {
                 ? 'Yes, it is ' + holiday.motivo
                 : negatives[Math.floor(Math.random() * negatives.length)];
 
+            const followUp = hasScreen? '' : ' Try asking when the next holiday is';
+
             app.ask(
                 app.buildRichResponse()
-                    .addSimpleResponse(simpleResponse)
-                    .addSimpleResponse(hasScreen
-                        ? 'What would you like to do next?'
-                        : 'What would you like to do next? Try asking when the next holiday is'
-                    )
+                    .addSimpleResponse(simpleResponse + '.\n What would you like to do next?' + followUp)
                     .addSuggestions(['When is the next holiday?'])
             );
         });
@@ -77,16 +75,16 @@ exports.holidayPal = (request, response) => {
                   .setImage(getImage(holiday.dia + '-' + holiday.mes), holiday.dia + '-' + holiday.mes)
             ));
 
-            app.askWithList(
-                app.buildRichResponse()
-                    .addSimpleResponse('The next holiday is in ' + difference + ' days')
-                    .addSimpleResponse(hasScreen
-                        ? 'What do you want to do next?'
-                        : 'What do you want to do next? Try asking about specific dates'
-                    )
-                    .addSuggestions(['Is today a holiday?']),
-                list
-            );
+            const followUp = hasScreen? '' : ' Try asking about specific dates';
+            const richResponse = app.buildRichResponse()
+                    .addSimpleResponse('The next holiday is in ' + difference + ' days.\n What do you want to do next?' + followUp)
+                    .addSuggestions(['Is today a holiday?']);
+
+            if (hasScreen)
+                app.askWithList(richResponse, list);
+            else
+                app.ask(richResponse);
+
         });
     });
 
