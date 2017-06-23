@@ -15,7 +15,7 @@ const negatives = [
 ];
 
 const getImage = txt => 
-    'https://placeholdit.imgix.net/~text?txtsize=120&w=200&h=200&bg=ffffff&txtclr=000000&txt=' + txt;
+    'https://placeholdit.imgix.net/~text?txtsize=100&w=200&h=200&bg=ffffff&txtclr=000000&txt=' + txt;
 
 const getDaysAppart = holiday => {
     const nextDate = new Date();
@@ -44,15 +44,16 @@ exports.holidayPal = (request, response) => {
             const month = date.getUTCMonth() + 1;
             const day = date.getUTCDate();
             const holiday = JSON.parse(body).find(h => h.mes == month && h.dia == day);
-            const simpleResponse = holiday
+            const answer = holiday
                 ? 'Yes, it is ' + holiday.motivo
                 : negatives[Math.floor(Math.random() * negatives.length)];
 
             const followUp = hasScreen? '' : ' Try asking when the next holiday is';
+            const simpleResponse = answer + '.\nWhat would you like to do next?' + followUp;
 
             app.ask(
                 app.buildRichResponse()
-                    .addSimpleResponse(simpleResponse + '.\n What would you like to do next?' + followUp)
+                    .addSimpleResponse({speech: simpleResponse, displayText: simpleResponse})
                     .addSuggestions(['When is the next holiday?'])
             );
         });
@@ -76,9 +77,18 @@ exports.holidayPal = (request, response) => {
             ));
 
             const followUp = hasScreen? '' : ' Try asking about specific dates';
-            const richResponse = app.buildRichResponse()
-                    .addSimpleResponse('The next holiday is in ' + difference + ' days.\n What do you want to do next?' + followUp)
-                    .addSuggestions(['Is today a holiday?']);
+            const simpleResponse = 'The next holiday is in ' + difference + ' days.\n' + 
+                'What do you want to do next?' + followUp;
+            const richResponse = app.buildRichResponse();
+            
+            // For some reason the first message is not spoken by the assistant on the first time
+            // Temorary hack to fix that
+            if (!hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
+                richResponse.addSimpleResponse('Sure!');
+
+            richResponse
+                .addSimpleResponse({speech: simpleResponse, displayText: simpleResponse})
+                .addSuggestions(['Is today a holiday?']);
 
             if (hasScreen)
                 app.askWithList(richResponse, list);
