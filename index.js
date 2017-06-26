@@ -82,8 +82,8 @@ exports.holidayPal = (request, response) => {
             const richResponse = app.buildRichResponse();
             
             // For some reason the first message is not spoken by the assistant on the first time
-            // Temorary hack to fix that
-            if (!hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
+            // Temporary hack to fix that
+            if (hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
                 richResponse.addSimpleResponse('Sure!');
 
             richResponse
