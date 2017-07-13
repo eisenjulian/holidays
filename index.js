@@ -7,11 +7,10 @@ const App = require('actions-on-google').ApiAiApp;
 const URL = 'http://nolaborables.com.ar/api/v2/feriados/' + (new Date().getYear() + 1900);
 
 const negatives = [
-    "Sadly no",
-    "No, get back to work!",
-    "Not really, it would be nice though",
-    "Not that I know of",
-    "Maybe in some weird religion"
+    "Sadly it's not a holiday",
+    "It's not a day off, get back to work!",
+    "It is not a holiday, it would be nice though",
+    "It is not a holiday that I know of"
 ];
 
 const getImage = txt => 
@@ -36,6 +35,7 @@ exports.holidayPal = (request, response) => {
     console.log('Request body: ' + JSON.stringify(request.body));
     const app = new App({request, response});
     const actionMap = new Map();
+    console.log('Called intent: ' + app.getIntent());
 
     actionMap.set('today', app => {
         httpRequest(URL, (error, response, body) => {
@@ -45,7 +45,7 @@ exports.holidayPal = (request, response) => {
             const day = date.getUTCDate();
             const holiday = JSON.parse(body).find(h => h.mes == month && h.dia == day);
             const answer = holiday
-                ? 'Yes, it is ' + holiday.motivo
+                ? 'Hurray, it is a holiday called ' + holiday.motivo
                 : negatives[Math.floor(Math.random() * negatives.length)];
 
             const followUp = hasScreen? '' : ' Try asking when the next holiday is';
@@ -83,8 +83,8 @@ exports.holidayPal = (request, response) => {
             
             // For some reason the first message is not spoken by the assistant on the first time
             // Temporary hack to fix that
-            if (hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
-                richResponse.addSimpleResponse('Sure!');
+            // if (hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
+            //     richResponse.addSimpleResponse({speech: 'Sure!', displayText: 'Sure!'});
 
             richResponse
                 .addSimpleResponse({speech: simpleResponse, displayText: simpleResponse})
