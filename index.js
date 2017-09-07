@@ -7,10 +7,11 @@ const App = require('actions-on-google').ApiAiApp;
 const URL = 'http://nolaborables.com.ar/api/v2/feriados/' + (new Date().getYear() + 1900);
 
 const negatives = [
-    "Sadly it's not a holiday",
-    "It's not a day off, get back to work!",
-    "It is not a holiday, it would be nice though",
-    "It is not a holiday that I know of"
+    // "Sadly it's not a holiday",
+    // "It's not a day off, get back to work!",
+    // "It is not a holiday, it would be nice though",
+    // "It is not a holiday that I know of",
+    "It's not a day off, grab that shovel!"
 ];
 
 const getImage = txt => 
@@ -81,11 +82,6 @@ exports.holidayPal = (request, response) => {
                 'What do you want to do next?' + followUp;
             const richResponse = app.buildRichResponse();
             
-            // For some reason the first message is not spoken by the assistant on the first time
-            // Temporary hack to fix that
-            // if (hasScreen && request.body.originalRequest.data.conversation.type == 'NEW')
-            //     richResponse.addSimpleResponse({speech: 'Sure!', displayText: 'Sure!'});
-
             richResponse
                 .addSimpleResponse({speech: simpleResponse, displayText: simpleResponse})
                 .addSuggestions(['Is today a holiday?']);
