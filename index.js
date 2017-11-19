@@ -33,7 +33,7 @@ exports.holidayPal = (request, response) => {
     // console.log('Request body: ' + JSON.stringify(request.body));
     const app = new App({request, response});
     const locale = locales[
-        request.body.lang
+        (request.body.lang || request.body.locale).substr(0, 2)
         // app.getUserLocale().substr(0, 2)
     ];
     const _ = (key, params) => {
@@ -74,7 +74,7 @@ exports.holidayPal = (request, response) => {
             const holidays = allHolidays.filter(h => h.date >= beginDate && h.date <= endDate);
 
             const list = app.buildList(_('title'));
-            holidays.slice(0, 5).forEach(holiday => list.addItems(
+            holidays.slice(0, 6).forEach(holiday => list.addItems(
                 app.buildOptionItem(holiday.motivo)
                   .setTitle(holiday.motivo)
                   .setDescription(_('date', holiday))
