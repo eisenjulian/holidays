@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "actions-on-google": "^1.0.0",
+    "dateformat": "^3.0.2",
     "http": "0.0.0",
     "request": "^2.81.0"
   },
